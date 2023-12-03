@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -5,17 +6,15 @@ import {
   TextInput,
   View,
   Text,
-  Alert,
   FlatList,
   ToastAndroid,
-  Keyboard
+  Keyboard,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { DataTable } from "react-native-paper";
-export default function Viewdata() {
+
+export default function Adddata() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
@@ -24,6 +23,7 @@ export default function Viewdata() {
   const [modalVisibles, setModalVisibles] = useState(false);
   const [userData, setUserData] = useState([]);
   const [selectedUserData, setSelectedUserData] = useState(null);
+
   const handleTextChange1 = (text) => {
     setFirstname(text);
   };
@@ -36,12 +36,15 @@ export default function Viewdata() {
   const handleTextChange4 = (text) => {
     setPassword(text);
   };
+
   const finddata = async () => {
     const result = await AsyncStorage.getItem("user");
     if (result !== null) setUserData(JSON.parse(result));
   };
+
   const newId =
     userData.length > 0 ? Math.max(...userData.map((item) => item.id)) + 1 : 1;
+
   const clearAll = async () => {
     try {
       await AsyncStorage.clear();
@@ -54,8 +57,8 @@ export default function Viewdata() {
   };
 
   const showToast = () => {
-    ToastAndroid.show('Data added successfully!', ToastAndroid.SHORT);
-  }
+    ToastAndroid.show("Data added successfully!", ToastAndroid.SHORT);
+  };
 
   const handleButtonPress = async () => {
     const contact = {
@@ -70,17 +73,19 @@ export default function Viewdata() {
     setUserData(updateData);
     await AsyncStorage.setItem("user", JSON.stringify(updateData));
     console.log(updateData);
-    setFirstname('');
-    setLastname('');
-    setUsername('');
-    setPassword('');
-    setCourse('none');
+    setFirstname("");
+    setLastname("");
+    setUsername("");
+    setPassword("");
+    setCourse("none");
     showToast();
     Keyboard.dismiss();
   };
+
   const go = () => {
     setModalVisible(false);
   };
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleOpenModal = () => {
@@ -103,6 +108,7 @@ export default function Viewdata() {
   useEffect(() => {
     finddata();
   }, []);
+
   return (
     <View style={styles.containers1}>
       <Modal
@@ -119,13 +125,13 @@ export default function Viewdata() {
             <Text>Course: {selectedUserData?.course}</Text>
             <Text>Username: {selectedUserData?.username}</Text>
             <Text>Password: {selectedUserData?.password}</Text>
-<View style={styles.closemod}>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={handleCloseModals}
-            >
-              <Text style={styles.buttonText}>CLOSE</Text>
-            </TouchableOpacity>
+            <View style={styles.closemod}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={handleCloseModals}
+              >
+                <Text style={styles.buttonText}>CLOSE</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -211,7 +217,9 @@ export default function Viewdata() {
             >
               <DataTable.Row>
                 <DataTable.Cell>{item.id}</DataTable.Cell>
-                <DataTable.Cell>{`${item.lastname}, ${item.firstname}`}</DataTable.Cell>
+                <DataTable.Cell>
+                  {`${item.lastname}, ${item.firstname}`}
+                </DataTable.Cell>
                 <DataTable.Cell>{item.course}</DataTable.Cell>
                 <DataTable.Cell>{item.username}</DataTable.Cell>
               </DataTable.Row>
@@ -220,13 +228,17 @@ export default function Viewdata() {
           keyExtractor={(item) => item.id.toString()}
         />
       </DataTable>
-    
+
       <TouchableOpacity style={styles.buttons} onPress={handleOpenModal}>
         <Text style={styles.text}>ADD STUDENT</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.clearAll} onPress={clearAll}>
+        <Text style={styles.text}>CLEAR</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   containers1: {
     flex: 1,
@@ -287,7 +299,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#6571e6",
     borderRadius: 5,
     margin: 10,
-    width: 100
+    width: 100,
   },
   button: {
     padding: 10,
@@ -297,7 +309,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    textAlign: 'center'
+    textAlign: "center",
   },
   container: {
     flex: 1,
@@ -351,22 +363,31 @@ const styles = StyleSheet.create({
   tabletext: {
     fontSize: 15,
   },
-  usermodal:{
+  usermodal: {
     elevation: 10,
     backgroundColor: "#eeeee4",
     paddingLeft: 25,
     padding: 30,
     gap: 20,
-    width: 300
+    width: 300,
   },
 
-  usermodalhead:{
+  usermodalhead: {
     marginBottom: 20,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
- closemod:{
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
- }
+  closemod: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10, // Added marginBottom
+  },
+  clearAll: {
+    backgroundColor: "#FF5733",
+    padding: 10,
+    width: "50%",
+    height: 50,
+    justifyContent: "center",
+    marginTop: 10,
+  },
 });
